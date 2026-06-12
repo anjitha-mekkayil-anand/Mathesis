@@ -8,4 +8,7 @@
     <Project Path="src/Mathesis.Readiness/Mathesis.Readiness.csproj" />
     <Project Path="src/Mathesis.Runner/Mathesis.Runner.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Mathesis.Tests/Mathesis.Tests.csproj" />
+  </Folder>
 </Solution>

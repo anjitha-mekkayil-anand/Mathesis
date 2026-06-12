@@ -301,6 +301,15 @@ revise-and-reassess). Latest run: **bands stable for all four learners, 100%
 next-step direction agreement (8/8 runs)** — the deterministic pre-filter anchors
 the pipeline, and the grounded prompts keep the LLM's judgment reproducible.
 
+The deterministic core is also unit-tested (`tests/Mathesis.Tests`, xUnit): readiness
+band boundaries, weighted domain math, unrated-domain defaults, gap detection, and
+the SQLite store's approval-queue and snapshot behaviour — all on an in-memory
+database, no credentials needed.
+
+```bash
+dotnet test tests/Mathesis.Tests
+```
+
 ## Readiness as a time series
 
 Every readiness check writes a snapshot to SQLite, so readiness is a trend, not a
