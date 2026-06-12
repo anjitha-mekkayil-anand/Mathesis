@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Mathesis.Agent/Mathesis.Agent.csproj" />
+    <Project Path="src/Mathesis.Core/Mathesis.Core.csproj" />
+    <Project Path="src/Mathesis.Dashboard/Mathesis.Dashboard.csproj" />
+    <Project Path="src/Mathesis.Data/Mathesis.Data.csproj" />
+    <Project Path="src/Mathesis.Mcp/Mathesis.Mcp.csproj" />
+    <Project Path="src/Mathesis.Readiness/Mathesis.Readiness.csproj" />
+    <Project Path="src/Mathesis.Runner/Mathesis.Runner.csproj" />
+  </Folder>
+</Solution>

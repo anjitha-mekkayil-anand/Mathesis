@@ -1,0 +1,234 @@
+@page "/"
+@rendermode InteractiveServer
+@using Mathesis.Core
+@using Mathesis.Data
+@using Mathesis.Readiness
+@inject IApprovalQueue ApprovalQueue
+@inject RosterConfig Roster
+@inject ReadinessCalculator Calculator
+@implements IAsyncDisposable
+
+<PageTitle>Mathesis — Team Learning Monitor</PageTitle>
+
+<div class="container-fluid px-4 py-3">
+
+    <div class="d-flex align-items-center mb-4">
+        <h1 class="me-3 mb-0" style="font-size:1.6rem;font-weight:700;letter-spacing:.5px;">Mathesis</h1>
+        <span class="badge bg-secondary" style="font-size:.75rem;font-weight:400;">Team Learning Monitor</span>
+        <span class="ms-auto text-muted small">Last updated: @_lastRefresh.ToLocalTime().ToString("HH:mm:ss")</span>
+    </div>
+
+    <!-- ── Team Readiness ─────────────────────────────────────── -->
+    <h5 class="text-uppercase text-muted mb-3" style="font-size:.75rem;letter-spacing:1.5px;">Team Certification Readiness</h5>
+
+    <div class="card mb-4 border-0 shadow-sm">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Learner</th><th>Role</th><th>Target</th>
+                    <th style="min-width:180px;">Readiness</th><th>Band</th>
+                    <th>Practice</th><th>Hours</th><th>Work signals</th><th>Weak domains</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var (learner, assessment) in _readiness)
+                {
+                    <tr>
+                        <td>
+                            <span class="fw-semibold">@learner.LearnerId</span>
+                            <div class="text-muted" style="font-size:.75rem;">@learner.Name</div>
+                        </td>
+                        <td class="small">@learner.Role</td>
+                        <td><span class="badge bg-dark">@learner.TargetCertification</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height:8px;">
+                                    <div class="progress-bar @ProgressClass(assessment.Band)" style="width:@(assessment.Score)%"></div>
+                                </div>
+                                <span class="small fw-semibold">@assessment.Score</span>
+                            </div>
+                        </td>
+                        <td><span class="badge @BandBadge(assessment.Band)">@assessment.Band</span></td>
+                        <td class="small">@(learner.PracticeScore?.ToString("0") ?? "—")</td>
+                        <td class="small">@learner.StudyHoursLogged</td>
+                        <td class="small text-muted">@learner.MeetingHoursPerWeek h mtg · @learner.FocusHoursPerWeek h focus
+                            @if (learner.MeetingHoursPerWeek > 20)
+                            {
+                                <span class="badge bg-warning text-dark ms-1" title="Heavy meeting load — capacity risk">capacity</span>
+                            }
+                        </td>
+                        <td class="small">
+                            @if (assessment.GapDomains.Count == 0)
+                            {
+                                <span class="text-success">none</span>
+                            }
+                            else
+                            {
+                                <span title="@string.Join(", ", assessment.GapDomains.Select(d => d.Name))">@assessment.GapDomains.Count</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ── Study Plan Approval Queue ──────────────────────────── -->
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="text-uppercase text-muted mb-0" style="font-size:.75rem;letter-spacing:1.5px;">Study Plan Approval Queue</h5>
+        @if (_pending.Count > 0)
+        {
+            <span class="ms-2 badge bg-warning text-dark">@_pending.Count pending</span>
+        }
+        <span class="ms-auto text-muted" style="font-size:.7rem;">Plans are proposed by agents — nothing activates without your approval</span>
+    </div>
+
+    @if (_pending.Count == 0)
+    {
+        <div class="alert alert-success border-0">No plans waiting for approval.</div>
+    }
+    else
+    {
+        @foreach (var item in _pending)
+        {
+            <div class="card mb-3 border-0 shadow-sm">
+                <div class="card-header d-flex align-items-center py-2 bg-warning bg-opacity-10">
+                    <span class="fw-semibold me-2">@item.LearnerId</span>
+                    <span class="badge bg-dark">@item.CertificationId</span>
+                    @if (item.Rationale.Contains("(Source:") || item.Plan.Contains("(Source:")
+                         || item.Rationale.Contains("grounded in", StringComparison.OrdinalIgnoreCase)
+                         || item.Rationale.Contains("Guide", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <span class="badge ms-2" style="background:#1b9e9e;" title="Plan grounded in cited knowledge-base documents via Foundry IQ (Azure AI Search)">Grounded · Foundry IQ</span>
+                    }
+                    <span class="ms-auto text-muted small">Proposed @item.CreatedAt.ToLocalTime().ToString("HH:mm dd MMM")</span>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2" style="font-size:.85rem;white-space:pre-wrap;">@item.Plan</div>
+
+                    <details class="mb-3">
+                        <summary class="text-muted small">Agent rationale (work signals, history, citations)</summary>
+                        <div class="mt-2 p-2 rounded text-muted" style="background:#f8f9fa;font-size:.8rem;white-space:pre-wrap;">@item.Rationale</div>
+                    </details>
+
+                    @if (!string.IsNullOrEmpty(item.RecommendedNextStep))
+                    {
+                        <div class="alert alert-info py-2 mb-3" style="font-size:.85rem;">
+                            <strong>Latest next step:</strong> @item.RecommendedNextStep
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Notes (optional)</label>
+                        <textarea class="form-control form-control-sm" rows="2"
+                                  placeholder="Add context for this decision..."
+                                  @bind="_notes[item.Id]"></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success btn-sm" @onclick='() => DecideAsync(item.Id, "approved")'>Approve plan</button>
+                        <button class="btn btn-danger btn-sm" @onclick='() => DecideAsync(item.Id, "rejected")'>Reject</button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- ── Recently Decided ─────────────────────────────────── -->
+    @if (_resolved.Count > 0)
+    {
+        <h5 class="text-uppercase text-muted mt-4 mb-3" style="font-size:.75rem;letter-spacing:1.5px;">Recently Decided</h5>
+        <table class="table table-sm table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Learner</th><th>Certification</th><th>Decision</th><th>Notes</th><th>Decided</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in _resolved)
+                {
+                    <tr>
+                        <td>@item.LearnerId</td>
+                        <td><span class="badge bg-dark">@item.CertificationId</span></td>
+                        <td><span class="badge @(item.Status == "approved" ? "bg-success" : "bg-danger")">@item.Status</span></td>
+                        <td class="text-muted small">@item.Notes</td>
+                        <td class="text-muted small">@item.DecidedAt?.ToLocalTime().ToString("HH:mm dd MMM")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>
+
+@code {
+    private List<(LearnerConfig Learner, ReadinessAssessment Assessment)> _readiness = [];
+    private List<PlanReviewItem> _pending = [];
+    private List<PlanReviewItem> _resolved = [];
+    private Dictionary<long, string> _notes = [];
+    private DateTimeOffset _lastRefresh = DateTimeOffset.UtcNow;
+    private PeriodicTimer? _timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshAsync();
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
+        _ = RunTimerAsync();
+    }
+
+    private async Task RunTimerAsync()
+    {
+        while (_timer is not null && await _timer.WaitForNextTickAsync())
+        {
+            await RefreshAsync();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task RefreshAsync()
+    {
+        _readiness = Roster.Learners
+            .Select(l => (l, Roster.FindCertification(l.TargetCertification)))
+            .Where(pair => pair.Item2 is not null)
+            .Select(pair => (pair.l, Calculator.Assess(pair.l, pair.Item2!)))
+            .OrderBy(pair => pair.Item2.Score)
+            .ToList();
+
+        var all = await ApprovalQueue.GetRecentPlansAsync(50);
+        _pending = [.. all.Where(p => p.Status == "pending")];
+        _resolved = [.. all.Where(p => p.Status != "pending").Take(10)];
+
+        foreach (var item in _pending)
+            _notes.TryAdd(item.Id, string.Empty);
+
+        _lastRefresh = DateTimeOffset.UtcNow;
+    }
+
+    private async Task DecideAsync(long id, string decision)
+    {
+        var notes = _notes.GetValueOrDefault(id);
+        await ApprovalQueue.UpdatePlanDecisionAsync(id, decision, string.IsNullOrWhiteSpace(notes) ? null : notes);
+        await RefreshAsync();
+    }
+
+    private static string BandBadge(ReadinessBand band) => band switch
+    {
+        ReadinessBand.Ready => "bg-success",
+        ReadinessBand.Borderline => "bg-warning text-dark",
+        _ => "bg-danger"
+    };
+
+    private static string ProgressClass(ReadinessBand band) => band switch
+    {
+        ReadinessBand.Ready => "bg-success",
+        ReadinessBand.Borderline => "bg-warning",
+        _ => "bg-danger"
+    };
+
+    public async ValueTask DisposeAsync()
+    {
+        _timer?.Dispose();
+        _timer = null;
+        await Task.CompletedTask;
+    }
+}

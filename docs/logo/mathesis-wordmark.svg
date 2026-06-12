@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 280" width="1000" height="280">
+  <!-- Mathesis wordmark — self-contained banner, works on light and dark backgrounds -->
+  <rect width="1000" height="280" rx="48" fill="#0d1b2a"/>
+
+  <!-- book + steps icon -->
+  <g transform="translate(40,28) scale(0.44)">
+    <path d="M256 416 C210 392 140 388 84 404 V296 C140 280 210 284 256 308 Z"
+          fill="#13293d" stroke="#7fd8d8" stroke-width="14" stroke-linejoin="round"/>
+    <path d="M256 416 C302 392 372 388 428 404 V296 C372 280 302 284 256 308 Z"
+          fill="#13293d" stroke="#7fd8d8" stroke-width="14" stroke-linejoin="round"/>
+    <line x1="256" y1="308" x2="256" y2="416" stroke="#7fd8d8" stroke-width="10"/>
+    <polyline points="140,332 196,332 196,272 252,272 252,212 308,212 308,152 364,152"
+              fill="none" stroke="#f4a259" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="392" cy="124" r="22" fill="#0d1b2a" stroke="#f4a259" stroke-width="12"/>
+    <circle cx="392" cy="124" r="7" fill="#f4a259"/>
+  </g>
+
+  <!-- name -->
+  <text x="300" y="150" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="88" font-weight="600" letter-spacing="12" fill="#e0e1dd">MATHESIS</text>
+  <!-- tagline -->
+  <text x="304" y="205" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="30" font-style="italic" letter-spacing="2" fill="#7fd8d8">Readiness you can prove.</text>
+</svg>

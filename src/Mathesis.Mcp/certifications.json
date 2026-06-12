@@ -1,0 +1,39 @@
+[
+  {
+    "id": "AZ-204",
+    "name": "Developing Solutions for Microsoft Azure (synthetic demo blueprint)",
+    "recommendedHours": 20,
+    "passThreshold": 75,
+    "domains": [
+      { "name": "Develop Azure compute solutions", "weight": 0.30 },
+      { "name": "Develop for Azure storage", "weight": 0.20 },
+      { "name": "Implement Azure security", "weight": 0.20 },
+      { "name": "Monitor and troubleshoot solutions", "weight": 0.15 },
+      { "name": "Connect to Azure services", "weight": 0.15 }
+    ]
+  },
+  {
+    "id": "AZ-400",
+    "name": "Designing and Implementing DevOps Solutions (synthetic demo blueprint)",
+    "recommendedHours": 25,
+    "passThreshold": 75,
+    "domains": [
+      { "name": "Design and implement processes", "weight": 0.25 },
+      { "name": "Implement CI/CD pipelines", "weight": 0.30 },
+      { "name": "Implement security and compliance", "weight": 0.20 },
+      { "name": "Design a monitoring strategy", "weight": 0.25 }
+    ]
+  },
+  {
+    "id": "DP-203",
+    "name": "Data Engineering on Microsoft Azure (synthetic demo blueprint)",
+    "recommendedHours": 22,
+    "passThreshold": 75,
+    "domains": [
+      { "name": "Design and implement data storage", "weight": 0.30 },
+      { "name": "Develop data processing", "weight": 0.35 },
+      { "name": "Secure data solutions", "weight": 0.20 },
+      { "name": "Monitor and optimize data solutions", "weight": 0.15 }
+    ]
+  }
+]

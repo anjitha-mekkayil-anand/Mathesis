@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Pronoia logo — the machine pulse runs through a watching eye -->
+  <rect width="512" height="512" rx="96" fill="#0d1b2a"/>
+  <!-- eye outline -->
+  <path d="M64 256 C140 150 372 150 448 256 C372 362 140 362 64 256 Z"
+        fill="none" stroke="#7fd8d8" stroke-width="16" stroke-linejoin="round"/>
+  <!-- iris -->
+  <circle cx="256" cy="256" r="86" fill="#13293d" stroke="#f4a259" stroke-width="12"/>
+  <!-- pulse line crossing the iris: flat → spike → rising drift -->
+  <polyline points="186,256 218,256 234,256 248,210 262,290 276,240 290,256 326,256"
+            fill="none" stroke="#f4a259" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

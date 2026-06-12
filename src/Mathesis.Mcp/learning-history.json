@@ -1,0 +1,12 @@
+[
+  { "learnerId": "L-1001", "role": "Cloud Engineer",  "certification": "AZ-204", "practiceScoreAvg": 67, "hoursStudied": 18, "examOutcome": "Fail" },
+  { "learnerId": "L-1002", "role": "DevOps Engineer", "certification": "AZ-400", "practiceScoreAvg": 82, "hoursStudied": 24, "examOutcome": "Pass" },
+  { "learnerId": "L-1003", "role": "Data Engineer",   "certification": "DP-203", "practiceScoreAvg": 74, "hoursStudied": 20, "examOutcome": "Pass" },
+  { "learnerId": "L-1004", "role": "Cloud Engineer",  "certification": "AZ-204", "practiceScoreAvg": 79, "hoursStudied": 22, "examOutcome": "Pass" },
+  { "learnerId": "L-1005", "role": "Cloud Engineer",  "certification": "AZ-204", "practiceScoreAvg": 61, "hoursStudied": 9,  "examOutcome": "Fail" },
+  { "learnerId": "L-1006", "role": "DevOps Engineer", "certification": "AZ-400", "practiceScoreAvg": 70, "hoursStudied": 15, "examOutcome": "Fail" },
+  { "learnerId": "L-1007", "role": "DevOps Engineer", "certification": "AZ-400", "practiceScoreAvg": 85, "hoursStudied": 28, "examOutcome": "Pass" },
+  { "learnerId": "L-1008", "role": "Data Engineer",   "certification": "DP-203", "practiceScoreAvg": 68, "hoursStudied": 12, "examOutcome": "Fail" },
+  { "learnerId": "L-1009", "role": "Data Engineer",   "certification": "DP-203", "practiceScoreAvg": 77, "hoursStudied": 21, "examOutcome": "Pass" },
+  { "learnerId": "L-1010", "role": "Cloud Engineer",  "certification": "AZ-204", "practiceScoreAvg": 76, "hoursStudied": 25, "examOutcome": "Pass" }
+]

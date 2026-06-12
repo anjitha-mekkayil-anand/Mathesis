@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1280px; height: 720px; background: #0d1b2a; overflow: hidden;
+         font-family: 'Cascadia Mono', Consolas, monospace; }
+  #term { padding: 34px 40px 0 40px; font-size: 17.5px; line-height: 1.5;
+          color: #e0e1dd; white-space: pre-wrap; height: 640px; overflow: hidden; }
+  .p  { color: #9fb3c8; }          /* prompt */
+  .c  { color: #e0e1dd; }          /* command */
+  .g  { color: #4ade80; }          /* green */
+  .y  { color: #facc15; }          /* yellow */
+  .r  { color: #f87171; }          /* red */
+  .t  { color: #67e8f9; }          /* teal/cyan tags */
+  .dy { color: #f4a259; }          /* dark yellow / amber */
+  .dg { color: #6b7f93; }          /* dim gray */
+  .w  { color: #ffffff; font-weight: 600; }
+  #cursor { display: inline-block; width: 9px; height: 19px; background: #e0e1dd;
+            vertical-align: text-bottom; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  #caption { position: fixed; left: 0; right: 0; bottom: 0; height: 56px;
+             background: rgba(13,27,42,.92); border-top: 1px solid #2e4a66;
+             display: flex; align-items: center; justify-content: center;
+             font-family: 'Segoe UI', sans-serif; font-size: 21px; color: #7fd8d8;
+             padding: 0 40px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="term"></div><span id="cursor"></span>
+<div id="caption"></div>
+<script>
+const term = document.getElementById('term');
+const cap = document.getElementById('caption');
+// script: [delayMsBefore, htmlToAppend, captionOrNull]
+const steps = [
+  [600,  "<span class='p'>C:\\Mathesis&gt; </span>", "A deterministic readiness score routes every learner — no LLM in the hot path"],
+  [400,  "<span class='c'>dotnet run --project src/Mathesis.Runner -- --readiness</span>\n", null],
+  [900,  "<span class='g'>[Foundry IQ] grounded: index 'mathesis-learning-kb'</span>\n\n", null],
+  [500,  "Deterministic readiness report (no LLM involved):\n\n", null],
+  [600,  "EMP-001 (Cloud Engineer, target AZ-204)\n<span class='r'>  48.3/100 (NotReady) — domains 53%, hours 6/20, practice 58; 5 weak domains</span>\n\n", null],
+  [500,  "EMP-002 (DevOps Engineer, target AZ-400)\n<span class='g'>  84.5/100 (Ready) — domains 86%, hours 21/25, practice 81; no weak domains</span>\n\n", null],
+  [500,  "EMP-003 (Cloud Engineer, target AZ-204)\n<span class='y'>  66.6/100 (Borderline) — domains 69%, hours 12/20, practice 68; 3 weak domains</span>\n\n", null],
+  [500,  "EMP-004 (Data Engineer, target DP-203)\n<span class='r'>  22.7/100 (NotReady) — domains 33%, hours 4/22, practice n/a; 4 weak domains</span>\n\n", null],
+  [2600, "<span class='p'>C:\\Mathesis&gt; </span>", "Now the full pipeline for the borderline learner — four agents, two human gates"],
+  [400,  "<span class='c'>dotnet run --project src/Mathesis.Runner -- EMP-003</span>\n", null],
+  [900,  "<span class='g'>[Foundry IQ] grounded: index 'mathesis-learning-kb'</span>\n\n", null],
+  [800,  "<span class='t'>[Readiness]</span>     <span class='y'>EMP-003: 66.6/100 (Borderline) — deterministic pre-filter, no LLM</span>\n", null],
+  [1400, "<span class='t'>[Curator]</span>       curating learning path for weak domains: Develop for Azure storage, Implement Azure security, Connect to Azure services...\n", "The Curator maps weak domains to content — cited from the Foundry IQ knowledge base (Azure AI Search)"],
+  [4200, "<span class='t'>[Planner]</span>       generating capacity-aware study plan...\n", "The Planner fits study to real work signals: 16 focus hours → max 8 hours/week, evening slot"],
+  [4200, "<span class='t'>[Planner]</span>       <span class='dy'>plan recorded — status: pending manager approval.</span>\n", "The plan cannot activate itself — it lands in the manager approval queue as PENDING"],
+  [2400, "<span class='t'>[Human gate]</span>    <span class='y'>EMP-003 is Borderline (66.6/100). Ready to be assessed now? [y/N] </span>", "Human gate #1 — the learner decides when to be assessed"],
+  [2200, "<span class='w'>y</span>\n", null],
+  [900,  "<span class='t'>[Assessor]</span>      generating cited questions + readiness verdict...\n", "The Assessor writes five questions, each citing its source document — then an honest verdict"],
+  [4600, "<span class='t'>[Assessor]</span>      <span class='dy'>next step recorded.</span>\n\n", null],
+  [1200, "<span class='w'>=== EMP-003 (AZ-204) ===</span>\n", null],
+  [400,  "Readiness:   <span class='y'>66.6/100 (Borderline)</span>\n", null],
+  [400,  "Plan:        proposed — <span class='dy'>pending manager approval</span>\n", null],
+  [500,  "Next step:   Extend the study plan by 2 weeks, focused on the weak domains.\n             Reassess readiness after the extended study period.\n", "Grounded, cited, and waiting for a human — that's the whole idea"],
+  [3500, "", null]
+];
+let i = 0;
+function run() {
+  if (i >= steps.length) { document.title = "REPLAY-DONE"; return; }
+  const [delay, html, caption] = steps[i++];
+  setTimeout(() => {
+    term.insertAdjacentHTML('beforeend', html);
+    if (caption !== null) cap.textContent = caption;
+    run();
+  }, delay);
+}
+run();
+</script>
+</body>
+</html>

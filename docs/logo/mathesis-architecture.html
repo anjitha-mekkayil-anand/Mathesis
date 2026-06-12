@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1280px; height: 720px; background: #0d1b2a; overflow: hidden;
+         font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #e0e1dd;
+         padding: 34px 38px; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: 2px; }
+  .sub { color: #7fd8d8; font-size: 16px; margin-top: 4px; letter-spacing: .5px; }
+  .flow { display: flex; align-items: stretch; gap: 10px; margin-top: 26px; }
+  .col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .arrow { align-self: center; color: #9fb3c8; font-size: 30px; padding: 0 2px; }
+  .box { border: 2px solid #2e4a66; border-radius: 12px; padding: 12px 14px; background: #13293d; }
+  .box h3 { font-size: 15px; color: #7fd8d8; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .box p, .box li { font-size: 13.5px; color: #c5d1de; line-height: 1.45; }
+  .box ul { list-style: none; }
+  .box li::before { content: "▸ "; color: #7fd8d8; }
+  .ms { border-color: #7fd8d8; }
+  .ms h3 .badge { background: #7fd8d8; color: #0d1b2a; border-radius: 4px; font-size: 10px;
+                  padding: 1px 6px; margin-left: 6px; vertical-align: middle; letter-spacing: .5px; }
+  .agent { border: 1.5px solid #41617f; border-radius: 8px; padding: 7px 10px; margin-top: 6px;
+           font-size: 13px; background: #0f2236; }
+  .agent b { color: #e0e1dd; } .agent span { color: #9fb3c8; font-size: 12px; }
+  .gate { border: 2px solid #f4a259; background: #2a1f12; }
+  .gate h3 { color: #f4a259; }
+  .footer { position: absolute; bottom: 26px; left: 38px; right: 38px; display: flex;
+            justify-content: space-between; color: #9fb3c8; font-size: 14px; letter-spacing: .5px; }
+</style>
+</head>
+<body>
+  <h1>MATHESIS — ARCHITECTURE</h1>
+  <div class="sub">Reasoning Agents · multi-agent enterprise learning system · all data synthetic</div>
+
+  <div class="flow">
+    <div class="col" style="flex:1.05">
+      <div class="box">
+        <h3>Synthetic Data</h3>
+        <ul>
+          <li>learners.json — work signals <i>(Work&nbsp;IQ pattern)</i></li>
+          <li>certifications.json — skills ⇄ weights ⇄ thresholds <i>(Fabric&nbsp;IQ pattern)</i></li>
+          <li>learning-history.json — prior outcomes</li>
+        </ul>
+      </div>
+      <div class="box ms">
+        <h3>Foundry IQ <span class="badge">AZURE AI SEARCH</span></h3>
+        <p>Index <b>mathesis-learning-kb</b> — 7 approved synthetic docs. Agentic retrieval, <b>grounded answers with citations</b>. Fail-open.</p>
+      </div>
+    </div>
+
+    <div class="arrow">➜</div>
+
+    <div class="col">
+      <div class="box">
+        <h3>Deterministic Pre-filter</h3>
+        <p><b>Readiness Calculator</b> — 55% domains · 25% hours · 20% practice. Routes Ready / Borderline / NotReady. <b>No LLM in the hot path.</b></p>
+      </div>
+      <div class="box ms">
+        <h3>MCP Server <span class="badge">MODEL CONTEXT PROTOCOL</span></h3>
+        <p><b>Mathesis.Mcp</b> — 7 tools (stdio): 4 read, 3 write. <b>No approve / certify tool exists.</b> Tool surface = role boundary.</p>
+      </div>
+    </div>
+
+    <div class="arrow">➜</div>
+
+    <div class="col" style="flex:1.15">
+      <div class="box ms" style="height:100%">
+        <h3>Multi-Agent Reasoning <span class="badge">MICROSOFT FOUNDRY</span></h3>
+        <p style="font-size:12.5px;color:#9fb3c8;">Azure AI Foundry · Mistral-small via SDK · shared agent loop, per-agent tool subsets</p>
+        <div class="agent"><b>1 · Learning Path Curator</b><br/><span>weak domains → cited content</span></div>
+        <div class="agent"><b>2 · Study Plan Generator</b><br/><span>capacity-aware schedule → <b>pending</b> plan</span></div>
+        <div class="agent"><b>3 · Assessment Agent</b><br/><span>cited questions + readiness verdict</span></div>
+        <div class="agent"><b>4 · Manager Insights</b><br/><span>team readiness + risk report</span></div>
+      </div>
+    </div>
+
+    <div class="arrow">➜</div>
+
+    <div class="col">
+      <div class="box">
+        <h3>Audit Store</h3>
+        <p><b>SQLite</b> — plans (pending / approved / rejected), assessments, next steps. The queue is the audit log.</p>
+      </div>
+      <div class="box gate">
+        <h3>⛩ Two Human Gates</h3>
+        <p><b>Gate 1 — learner:</b> "ready to be assessed?"<br/>
+           <b>Gate 2 — manager:</b> approves every plan in the <b>Blazor dashboard</b>. Agents reason; people decide.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>.NET 10 · Microsoft Foundry · Foundry IQ (Azure AI Search) · Model Context Protocol · Blazor Server · SQLite</span>
+    <span>MATHESIS</span>
+  </div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+[
+  {
+    "learnerId": "EMP-001",
+    "name": "Asha Varma (synthetic)",
+    "role": "Cloud Engineer",
+    "targetCertification": "AZ-204",
+    "meetingHoursPerWeek": 22,
+    "focusHoursPerWeek": 10,
+    "preferredLearningSlot": "Morning",
+    "studyHoursLogged": 6,
+    "practiceScore": 58,
+    "domainRatings": {
+      "Develop Azure compute solutions": 3,
+      "Develop for Azure storage": 3,
+      "Implement Azure security": 2,
+      "Monitor and troubleshoot solutions": 2,
+      "Connect to Azure services": 3
+    }
+  },
+  {
+    "learnerId": "EMP-002",
+    "name": "Dev Okonkwo (synthetic)",
+    "role": "DevOps Engineer",
+    "targetCertification": "AZ-400",
+    "meetingHoursPerWeek": 15,
+    "focusHoursPerWeek": 18,
+    "preferredLearningSlot": "Afternoon",
+    "studyHoursLogged": 21,
+    "practiceScore": 81,
+    "domainRatings": {
+      "Design and implement processes": 4,
+      "Implement CI/CD pipelines": 5,
+      "Implement security and compliance": 4,
+      "Design a monitoring strategy": 4
+    }
+  },
+  {
+    "learnerId": "EMP-003",
+    "name": "Mira Castel (synthetic)",
+    "role": "Cloud Engineer",
+    "targetCertification": "AZ-204",
+    "meetingHoursPerWeek": 12,
+    "focusHoursPerWeek": 16,
+    "preferredLearningSlot": "Evening",
+    "studyHoursLogged": 12,
+    "practiceScore": 68,
+    "domainRatings": {
+      "Develop Azure compute solutions": 4,
+      "Develop for Azure storage": 3,
+      "Implement Azure security": 3,
+      "Monitor and troubleshoot solutions": 4,
+      "Connect to Azure services": 3
+    }
+  },
+  {
+    "learnerId": "EMP-004",
+    "name": "Jonas Ferreira (synthetic)",
+    "role": "Data Engineer",
+    "targetCertification": "DP-203",
+    "meetingHoursPerWeek": 25,
+    "focusHoursPerWeek": 8,
+    "preferredLearningSlot": "Morning",
+    "studyHoursLogged": 4,
+    "practiceScore": null,
+    "domainRatings": {
+      "Design and implement data storage": 2,
+      "Develop data processing": 2,
+      "Secure data solutions": 1,
+      "Monitor and optimize data solutions": 1
+    }
+  }
+]

@@ -1,0 +1,25 @@
+# Build artifacts
+bin/
+obj/
+*.user
+
+# Local databases (regenerated on first run)
+*.db
+*.db-shm
+*.db-wal
+
+# IDE
+.vs/
+.vscode/
+*.suo
+
+# Secrets — never committed; use dotnet user-secrets
+secrets.json
+.env
+appsettings.*.local.json
+
+# Video pipeline intermediates
+node_modules/
+docs/video/clips/
+docs/video/voice/
+docs/video/package-lock.json
