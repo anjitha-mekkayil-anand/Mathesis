@@ -26,8 +26,11 @@ public sealed class ManagerInsightsAgent
         "problem for the manager to solve — not a learner failure. " +
         "Compare against historical outcomes where useful. " +
         "Present insights respectfully and without exposing sensitive personal detail. " +
+        "Recommend one shared weekly team study window that respects the team's collective " +
+        "meeting load and focus hours — team-level planning, not just individual plans. " +
         "Conclude with a concise team readiness report: summary line, per-learner status table, " +
-        "risk areas, and the one action the manager should take this week.";
+        "risk areas, the recommended team study window, and the one action the manager should " +
+        "take this week.";
 
     public async Task<InsightsOutcome> ReportAsync(
         ChatClient chatClient,

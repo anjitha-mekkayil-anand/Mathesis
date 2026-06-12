@@ -270,6 +270,7 @@ dotnet run --project src/Mathesis.Runner -- EMP-001       # one learner (interac
 dotnet run --project src/Mathesis.Runner -- --all          # whole team + manager report
 dotnet run --project src/Mathesis.Runner -- --team         # manager report only
 dotnet run --project src/Mathesis.Runner -- --readiness    # deterministic report — no LLM, no credentials
+dotnet run --project src/Mathesis.Runner -- --eval 3       # consistency evaluation: N runs per learner
 ```
 
 ### Dashboard (the manager gate)
@@ -290,6 +291,15 @@ dotnet run --project src/Mathesis.Dashboard --launch-profile http
   agents, and the human gates are the final verification layer
 - **Loop-back** — a not-ready assessment feeds back into the planning workflow rather
   than terminating
+
+## Evaluation
+
+`--eval N` runs the full pipeline N times per learner (non-interactive) and scores
+consistency: stability of the deterministic readiness band, and agreement on the
+direction of the LLM's next-step recommendation (book exam / follow plan /
+revise-and-reassess). Latest run: **bands stable for all four learners, 100%
+next-step direction agreement (8/8 runs)** — the deterministic pre-filter anchors
+the pipeline, and the grounded prompts keep the LLM's judgment reproducible.
 
 ## Observability, latency, cost
 

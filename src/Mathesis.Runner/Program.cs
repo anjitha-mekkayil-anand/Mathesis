@@ -68,6 +68,52 @@ if (args.Contains("--readiness"))
     return;
 }
 
+// --eval [N]: consistency harness — N non-interactive pipeline runs per learner;
+// reports stability of the deterministic band and agreement on the LLM's
+// next-step direction. Additive: exercises the pipeline, never modifies it.
+if (args.Contains("--eval"))
+{
+    var nArg = args.SkipWhile(a => a != "--eval").Skip(1).FirstOrDefault(a => !a.StartsWith("--"));
+    var runs = int.TryParse(nArg, out var n) && n > 0 ? n : 3;
+    var evalOrchestrator = host.Services.GetRequiredService<LearningPipelineOrchestrator>();
+
+    Console.WriteLine($"Consistency evaluation — {runs} non-interactive pipeline runs per learner:");
+    Console.WriteLine();
+
+    var overallAgree = 0;
+    var overallTotal = 0;
+    foreach (var id in roster.Learners.Select(l => l.LearnerId))
+    {
+        var bands = new List<string>();
+        var directions = new List<string>();
+        for (var r = 0; r < runs; r++)
+        {
+            var res = await evalOrchestrator.RunAsync([id], interactive: false, includeManagerReport: false);
+            if (res.Count == 0) continue;
+            bands.Add(res[0].Band);
+            directions.Add(ClassifyNextStep(res[0].NextStep));
+        }
+        if (bands.Count == 0) continue;
+
+        var bandStable = bands.Distinct().Count() == 1;
+        var top = directions.GroupBy(d => d).OrderByDescending(g => g.Count()).First();
+        var agreement = (double)top.Count() / directions.Count * 100;
+        overallAgree += top.Count();
+        overallTotal += directions.Count;
+
+        Console.ForegroundColor = agreement >= 100 ? ConsoleColor.Green
+            : agreement >= 67 ? ConsoleColor.Yellow : ConsoleColor.Red;
+        Console.WriteLine($"=== {id}: band {(bandStable ? "stable" : "UNSTABLE")} ({bands[0]}) · " +
+                          $"next-step direction '{top.Key}' — {agreement:0}% agreement over {directions.Count} runs");
+        Console.ResetColor();
+        Console.WriteLine();
+    }
+
+    Console.WriteLine($"Overall next-step direction agreement: " +
+                      $"{(overallTotal == 0 ? 0 : (double)overallAgree / overallTotal * 100):0}% ({overallAgree}/{overallTotal})");
+    return;
+}
+
 // Full pipeline: Curator → Planner → (human gate) → Assessor → Manager Insights.
 var runAll = args.Contains("--all");
 var teamReport = args.Contains("--team") || runAll;
@@ -99,6 +145,18 @@ foreach (var result in results)
     }
     Console.WriteLine($"Next step:   {result.NextStep}");
     Console.WriteLine();
+}
+
+// Buckets a free-text next step into a comparable direction for agreement scoring.
+static string ClassifyNextStep(string nextStep)
+{
+    var s = nextStep.ToLowerInvariant();
+    if (s.Contains("book")) return "book-exam";
+    if (s.Contains("follow the proposed study plan")) return "follow-plan";
+    if (s.Contains("extend") || s.Contains("revis") || s.Contains("reassess") ||
+        s.Contains("focus") || s.Contains("more time") || s.Contains("additional"))
+        return "revise-reassess";
+    return "other";
 }
 
 static async Task<RosterConfig> LoadRosterAsync(string mcpWorkingDirectory)
