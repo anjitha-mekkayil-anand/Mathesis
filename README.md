@@ -195,6 +195,13 @@ learning-kb/            7 synthetic knowledge documents (the Foundry IQ corpus)
 docs/reference/         Official suggested-architecture diagrams (for comparison)
 ```
 
+**Scenario coverage notes** (the suggested architecture allows variation, per the
+challenge brief): the Engagement Agent's responsibility — choosing realistic study
+windows from work signals — lives inside the Study Plan Generator, which schedules
+around each learner's meeting load, focus hours, and preferred slot. Team-level
+planning is served by the Manager Insights Agent, which aggregates individual
+readiness into team progress, capacity constraints, and exam-risk areas.
+
 The pipeline maps 1:1 onto the official suggested architecture
 (`docs/reference/reasoning-agents-architecture.png`): their Dispatcher = our
 orchestrator; their sequential sub-workflow = our Curator → Planner; their HITL step =
