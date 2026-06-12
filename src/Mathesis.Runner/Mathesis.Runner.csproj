@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Mathesis.Agent\Mathesis.Agent.csproj" />
     <ProjectReference Include="..\Mathesis.Core\Mathesis.Core.csproj" />
+    <ProjectReference Include="..\Mathesis.Data\Mathesis.Data.csproj" />
     <ProjectReference Include="..\Mathesis.Readiness\Mathesis.Readiness.csproj" />
   </ItemGroup>
 

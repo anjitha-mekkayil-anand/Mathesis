@@ -301,6 +301,13 @@ revise-and-reassess). Latest run: **bands stable for all four learners, 100%
 next-step direction agreement (8/8 runs)** — the deterministic pre-filter anchors
 the pipeline, and the grounded prompts keep the LLM's judgment reproducible.
 
+## Readiness as a time series
+
+Every readiness check writes a snapshot to SQLite, so readiness is a trend, not a
+moment: the dashboard shows a per-learner sparkline next to the score — the manager's
+answer to *"is the approved plan actually working?"* (`--seed-trends` seeds a
+synthetic 5-week history for demos.)
+
 ## Observability, latency, cost
 
 - Every hop is narrated on the console; every flag, plan, assessment, and decision is

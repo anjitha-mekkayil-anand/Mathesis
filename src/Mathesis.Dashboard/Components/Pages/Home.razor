@@ -26,7 +26,7 @@
             <thead class="table-light">
                 <tr>
                     <th>Learner</th><th>Role</th><th>Target</th>
-                    <th style="min-width:180px;">Readiness</th><th>Band</th>
+                    <th style="min-width:180px;">Readiness</th><th style="min-width:90px;">Trend</th><th>Band</th>
                     <th>Practice</th><th>Hours</th><th>Work signals</th><th>Weak domains</th>
                 </tr>
             </thead>
@@ -47,6 +47,20 @@
                                 </div>
                                 <span class="small fw-semibold">@assessment.Score</span>
                             </div>
+                        </td>
+                        <td>
+                            @if (_trends.TryGetValue(learner.LearnerId, out var trend) && trend.Count > 1)
+                            {
+                                <svg width="84" height="26" viewBox="0 0 100 28" preserveAspectRatio="none">
+                                    <polyline points="@TrendPoints(trend)" fill="none"
+                                              stroke="@(trend[^1] >= trend[0] ? "#4ade80" : "#f87171")"
+                                              stroke-width="2" vector-effect="non-scaling-stroke"/>
+                                </svg>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">—</span>
+                            }
                         </td>
                         <td><span class="badge @BandBadge(assessment.Band)">@assessment.Band</span></td>
                         <td class="small">@(learner.PracticeScore?.ToString("0") ?? "—")</td>
@@ -163,6 +177,7 @@
 
 @code {
     private List<(LearnerConfig Learner, ReadinessAssessment Assessment)> _readiness = [];
+    private Dictionary<string, List<double>> _trends = [];
     private List<PlanReviewItem> _pending = [];
     private List<PlanReviewItem> _resolved = [];
     private Dictionary<long, string> _notes = [];
@@ -194,6 +209,12 @@
             .OrderBy(pair => pair.Item2.Score)
             .ToList();
 
+        foreach (var learner in Roster.Learners)
+        {
+            var snaps = await ApprovalQueue.GetReadinessSnapshotsAsync(learner.LearnerId, 12);
+            _trends[learner.LearnerId] = snaps.Reverse().Select(s => s.Score).ToList(); // oldest → newest
+        }
+
         var all = await ApprovalQueue.GetRecentPlansAsync(50);
         _pending = [.. all.Where(p => p.Status == "pending")];
         _resolved = [.. all.Where(p => p.Status != "pending").Take(10)];
@@ -209,6 +230,20 @@
         var notes = _notes.GetValueOrDefault(id);
         await ApprovalQueue.UpdatePlanDecisionAsync(id, decision, string.IsNullOrWhiteSpace(notes) ? null : notes);
         await RefreshAsync();
+    }
+
+    /// <summary>Oldest-first scores → SVG polyline points in a 100×28 viewBox.</summary>
+    private static string TrendPoints(List<double> scores)
+    {
+        var min = scores.Min();
+        var max = scores.Max();
+        var range = max - min < 1e-9 ? 1 : max - min;
+        return string.Join(" ", scores.Select((v, i) =>
+        {
+            var x = scores.Count == 1 ? 0 : (double)i / (scores.Count - 1) * 100;
+            var y = 25 - ((v - min) / range * 22);
+            return string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{x:0.#},{y:0.#}");
+        }));
     }
 
     private static string BandBadge(ReadinessBand band) => band switch

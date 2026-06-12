@@ -55,9 +55,72 @@ public sealed class SqliteLearningStore : ILearningStore, IApprovalQueue, IAsync
                 created_at       TEXT    NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS readiness_snapshots (
+                id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                learner_id       TEXT    NOT NULL,
+                certification_id TEXT    NOT NULL,
+                score            REAL    NOT NULL,
+                band             TEXT    NOT NULL,
+                captured_at      TEXT    NOT NULL
+            );
+
             PRAGMA journal_mode=WAL;
             """;
         await cmd.ExecuteNonQueryAsync(ct);
+    }
+
+    public async Task RecordReadinessSnapshotAsync(
+        string learnerId, string certificationId, double score, string band,
+        DateTimeOffset? capturedAt = null, CancellationToken ct = default)
+    {
+        await _gate.WaitAsync(ct);
+        try
+        {
+            var cmd = _connection.CreateCommand();
+            cmd.CommandText =
+                """
+                INSERT INTO readiness_snapshots (learner_id, certification_id, score, band, captured_at)
+                VALUES ($learner, $cert, $score, $band, $ts);
+                """;
+            cmd.Parameters.AddWithValue("$learner", learnerId);
+            cmd.Parameters.AddWithValue("$cert", certificationId);
+            cmd.Parameters.AddWithValue("$score", score);
+            cmd.Parameters.AddWithValue("$band", band);
+            cmd.Parameters.AddWithValue("$ts", (capturedAt ?? DateTimeOffset.UtcNow).ToString("O"));
+            await cmd.ExecuteNonQueryAsync(ct);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public async Task<IReadOnlyList<(double Score, DateTimeOffset CapturedAt)>> GetReadinessSnapshotsAsync(
+        string learnerId, int limit = 12, CancellationToken ct = default)
+    {
+        await _gate.WaitAsync(ct);
+        try
+        {
+            var cmd = _connection.CreateCommand();
+            cmd.CommandText =
+                """
+                SELECT score, captured_at FROM readiness_snapshots
+                WHERE learner_id = $learner
+                ORDER BY captured_at DESC LIMIT $limit;
+                """;
+            cmd.Parameters.AddWithValue("$learner", learnerId);
+            cmd.Parameters.AddWithValue("$limit", limit);
+
+            var results = new List<(double, DateTimeOffset)>();
+            await using var reader = await cmd.ExecuteReaderAsync(ct);
+            while (await reader.ReadAsync(ct))
+                results.Add((reader.GetDouble(0), DateTimeOffset.Parse(reader.GetString(1))));
+            return results;
+        }
+        finally
+        {
+            _gate.Release();
+        }
     }
 
     public async Task RecordStudyPlanAsync(

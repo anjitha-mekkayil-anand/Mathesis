@@ -46,7 +46,7 @@ public sealed class MathesisTools(
 
     [McpServerTool(Name = "get_learner_readiness")]
     [Description("Returns the deterministic readiness assessment for a learner against their target certification: score (0-100), band (Ready / Borderline / NotReady), component breakdown, weak domains, study hours, and practice score. Call this first when assessing a learner.")]
-    public string GetLearnerReadiness(
+    public async Task<string> GetLearnerReadinessAsync(
         [Description("Learner ID, e.g. 'EMP-001'")] string learner_id)
     {
         var learner = roster.FindLearner(learner_id);
@@ -58,6 +58,10 @@ public sealed class MathesisTools(
             return JsonSerializer.Serialize(new { error = $"Learner '{learner_id}' targets unknown certification '{learner.TargetCertification}'." }, _json);
 
         var assessment = calculator.Assess(learner, certification);
+
+        // Telemetry: every readiness check leaves a snapshot — readiness becomes a time series.
+        await store.RecordReadinessSnapshotAsync(
+            learner.LearnerId, certification.Id, assessment.Score, assessment.Band.ToString());
         return JsonSerializer.Serialize(new
         {
             learner_id = assessment.LearnerId,

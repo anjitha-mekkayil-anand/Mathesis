@@ -68,6 +68,35 @@ if (args.Contains("--readiness"))
     return;
 }
 
+// --seed-trends: writes a synthetic weekly readiness history per learner (5 points
+// trending toward today's deterministic score) so the dashboard's trend sparklines
+// have a visible series. Synthetic by design, like all data here.
+if (args.Contains("--seed-trends"))
+{
+    var seedOpts = host.Services.GetRequiredService<IOptions<AgentOptions>>().Value;
+    await using var store = new Mathesis.Data.SqliteLearningStore(
+        $"Data Source={Path.Combine(seedOpts.McpWorkingDirectory, "mathesis.db")}");
+    await store.InitializeAsync();
+    var calc = new ReadinessCalculator();
+
+    foreach (var learner in roster.Learners)
+    {
+        var cert = roster.FindCertification(learner.TargetCertification);
+        if (cert is null) continue;
+        var current = calc.Assess(learner, cert);
+        // 5 weekly points easing toward the current score
+        for (var w = 4; w >= 0; w--)
+        {
+            var score = Math.Round(current.Score * (1 - 0.12 * w), 1);
+            var band = score >= 75 ? "Ready" : score >= 50 ? "Borderline" : "NotReady";
+            await store.RecordReadinessSnapshotAsync(
+                learner.LearnerId, cert.Id, score, band, DateTimeOffset.UtcNow.AddDays(-7 * w));
+        }
+        Console.WriteLine($"seeded 5-week trend for {learner.LearnerId} (ends {current.Score})");
+    }
+    return;
+}
+
 // --eval [N]: consistency harness — N non-interactive pipeline runs per learner;
 // reports stability of the deterministic band and agreement on the LLM's
 // next-step direction. Additive: exercises the pipeline, never modifies it.
