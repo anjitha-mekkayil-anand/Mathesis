@@ -345,3 +345,10 @@ synthetic 5-week history for demos.)
 </p>
 <p align="center"><i>Pronoia watches machines. Mathesis grows people.<br/>
 Same engine, same conviction: AI should reason, cite, and recommend — humans act.</i></p>
+
+## Design decisions
+
+- **Human approval gates over autonomous agents.** Agents analyze, reason, and recommend — but no agent has an approve tool. A learning plan activates only through the manager gate. This is a capability boundary, not a policy: the unsafe action is structurally impossible, not merely discouraged.
+- **Reused the Pronoia reasoning engine.** The overnight domain pivot (predictive maintenance → enterprise learning) was possible because the agent engine was built domain-agnostic — the pivot changed prompts, data models, and gates, not the architecture. Engines should outlive their first domain.
+- **Grounded retrieval (Foundry IQ) over raw generation.** Recommendations cite retrieved organizational content. The failure mode this kills is the plausible-but-invented learning path — the most damaging kind of wrong in an enterprise system.
+- **SQLite for the learning store.** Durable state with zero infrastructure at hackathon scope, behind an interface that swaps for a server database if scaled. Ops overhead deferred until the scale exists to justify it.
